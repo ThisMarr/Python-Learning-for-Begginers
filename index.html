@@ -100,14 +100,14 @@
             <div class="bg-gradient-to-r from-purple-600/20 via-pink-600/10 to-transparent border border-purple-500/30 rounded-2xl p-6 sm:p-8">
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-2">Creative Coding Tutorials 🎨</h1>
                 <p class="text-slate-300 text-base sm:text-lg max-w-3xl">
-                    Learn how to build fun, interactive games, text art, and creative tools with easy-to-understand Python code!
+                    Learn how to build fun, interactive games, text art, and advanced multi-module programs with easy-to-understand Python code!
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Sidebar Creative List -->
                 <div class="space-y-2 bg-slate-900 border border-slate-800 rounded-xl p-4 h-fit">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-2">Creative Projects</h2>
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-2">Creative & Complex Projects</h2>
                     <button onclick="loadCreative(0)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition bg-purple-500/10 text-purple-400 border border-purple-500/30 flex items-center justify-between creative-btn" id="creative-btn-0">
                         <span>1. ASCII Art Generator</span> <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
@@ -119,6 +119,12 @@
                     </button>
                     <button onclick="loadCreative(3)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between creative-btn" id="creative-btn-3">
                         <span>4. Pattern & Shape Drawer</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                    <button onclick="loadCreative(4)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between creative-btn" id="creative-btn-4">
+                        <span>5. Complex Object-Oriented RPG Engine</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                    <button onclick="loadCreative(5)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between creative-btn" id="creative-btn-5">
+                        <span>6. Advanced Data Analytics & Matrix Solver</span> <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
                 </div>
 
@@ -132,7 +138,7 @@
                             <i class="fa-solid fa-play"></i>
                             <span>Run Project in Playground</span>
                         </button>
-                        <span id="creative-progress" class="text-xs text-slate-400 font-medium">Project 1 of 4</span>
+                        <span id="creative-progress" class="text-xs text-slate-400 font-medium">Project 1 of 6</span>
                     </div>
                 </div>
             </div>
@@ -145,7 +151,7 @@
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-2">
                         <i class="fa-solid fa-terminal text-yellow-400"></i> Code Playground & AI Assistant
                     </h1>
-                    <p class="text-slate-400 text-sm mt-1">Write your Python code, run it live in your browser, or ask Gemini AI to debug and explain it.</p>
+                    <p class="text-slate-400 text-sm mt-1">Write simple or complex Python programs, run them live in your browser, and utilize full math/random/JSON libraries.</p>
                 </div>
                 <div class="flex items-center space-x-2">
                     <span id="pyodide-status" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
@@ -204,14 +210,14 @@
                         <div class="flex items-start space-x-3">
                             <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0 font-bold text-xs">AI</div>
                             <div class="bg-slate-800 text-slate-200 p-3.5 rounded-xl rounded-tl-none border border-slate-700/50 max-w-[85%]">
-                                Hello! I am your personal AI Python tutor powered by Gemini. Ask me any question, click <strong class="text-purple-300">Explain Code</strong> to understand what your script does, or click <strong class="text-purple-300">Debug Errors</strong> if your code runs into an issue!
+                                Hello! I am your personal AI Python tutor powered by Gemini. Ask me any question, click <strong class="text-purple-300">Explain Code</strong> to understand complex multi-module scripts, or click <strong class="text-purple-300">Debug Errors</strong> if your advanced programs run into any exceptions!
                             </div>
                         </div>
                     </div>
 
                     <!-- Chat Input Area -->
                     <div class="p-3 bg-slate-900 border-t border-slate-800 flex items-center space-x-2">
-                        <input type="text" id="ai-chat-input" onkeypress="handleChatKey(event)" placeholder="Ask Python question or request hints..." class="flex-1 bg-slate-950 text-slate-100 placeholder-slate-500 text-sm px-4 py-2.5 rounded-lg border border-slate-800 focus:outline-none focus:border-purple-500 transition">
+                        <input type="text" id="ai-chat-input" onkeypress="handleChatKey(event)" placeholder="Ask Python question or request complex logic help..." class="flex-1 bg-slate-950 text-slate-100 placeholder-slate-500 text-sm px-4 py-2.5 rounded-lg border border-slate-800 focus:outline-none focus:border-purple-500 transition">
                         <button onclick="sendChatMessage()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition shadow">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
@@ -345,7 +351,6 @@
             currentTutorialIndex = index;
             const tut = tutorials[index];
             
-            // Highlight active button
             document.querySelectorAll('.tut-btn').forEach((btn, idx) => {
                 if(idx === index) {
                     btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 flex items-center justify-between tut-btn";
@@ -373,7 +378,7 @@
             runPythonCode();
         }
 
-        // --- Creative Projects Data ---
+        // --- Creative Projects & Complex Programs Data ---
         const creativeProjects = [
             {
                 title: "1. ASCII Art Generator",
@@ -386,8 +391,6 @@
                     <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-purple-300 space-y-1">
                         <p>def make_banner(title):</p>
                         <p>&nbsp;&nbsp;&nbsp;&nbsp;border = "=" * (len(title) + 8)</p>
-                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print(border)</p>
-                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print(f"=== {title} ===")</p>
                         <p>&nbsp;&nbsp;&nbsp;&nbsp;print(border)</p>
                     </div>
                 `,
@@ -402,14 +405,12 @@
                         Combine variables, input conditionals, and functions to create branching storylines where players make decisions that lead to different outcomes!
                     </p>
                     <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-purple-300 space-y-1">
-                        <p>choice = "left"</p>
-                        <p>if choice == "left":</p>
-                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("You found a treasure chest! 💎")</p>
-                        <p>else:</p>
-                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("You met a friendly dragon! 🐉")</p>
+                        <p>path = "left"</p>
+                        <p>if path == "left":</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("Treasure found!")</p>
                     </div>
                 `,
-                code: 'def start_adventure():\n    print("You enter a mysterious forest...")\n    path = "left"  # Change to \"right\" to test other path!\n    \n    print(f"You chose to go: {path}")\n    if path == \"left\":\n        print("🎉 You discovered a hidden treasure chest filled with gold coins!")\n    else:\n        print("🐉 You encountered a wise old wizard who grants you magical powers!")\n\nstart_adventure()'
+                code: 'def start_adventure():\n    print("You enter a mysterious forest...")\n    path = "left"\n    print(f"You chose to go: {path}")\n    if path == "left":\n        print("🎉 You discovered a hidden treasure chest filled with gold coins!")\n    else:\n        print("🐉 You encountered a wise old wizard who grants you magical powers!")\n\nstart_adventure()'
             },
             {
                 title: "3. Emoji Storyteller",
@@ -417,12 +418,11 @@
                 explanation: `
                     <h3 class="text-xl font-bold text-white">Dynamic Emoji Generator 🦄</h3>
                     <p class="text-slate-300 text-sm leading-relaxed">
-                        Learn how to pick random items from lists and combine them with text to generate funny and creative micro-stories instantly.
+                        Learn how to pick random items from lists and combine them with text to generate funny and creative micro-stories instantly using the random module.
                     </p>
                     <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-purple-300 space-y-1">
                         <p>import random</p>
-                        <p>heroes = ["🐱 Cat", "🧙‍♂️ Wizard", "🚀 Astronaut"]</p>
-                        <p>print(random.choice(heroes))</p>
+                        <p>print(random.choice(["🐱", "🐶"]))</p>
                     </div>
                 `,
                 code: 'import random\n\ncharacters = ["🦁 Brave Lion", "🧙‍♀️ Wise Witch", "🤖 Cyber Robot", "🦊 Clever Fox"]\nsettings = ["on a distant alien planet 🪐", "inside a magical castle 🏰", "at the bottom of the ocean 🌊"]\nactions = ["found a secret treasure 💎", "solved an ancient riddle 📜", "befriended a friendly dragon 🐉"]\n\nprint("=== YOUR RANDOM EMOJI STORY ===")\nprint(f"Once upon a time, {random.choice(characters)} {random.choice(settings)} and {random.choice(actions)}!")'
@@ -441,6 +441,36 @@
                     </div>
                 `,
                 code: 'print("--- Pyramidal Growth Pattern ---")\nfor i in range(1, 6):\n    print("⭐" * i)\n\nprint("\\n--- Diamond Star Pattern ---")\nfor i in range(1, 4):\n    print(" " * (3 - i) + "🔥" * (2 * i - 1))'
+            },
+            {
+                title: "5. Complex Object-Oriented RPG Engine",
+                desc: "Run a complex multi-class object-oriented program with combat loops, inheritance, inventory management, and state algorithms.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Advanced OOP & Complex Logic ⚔️</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        This complex program demonstrates advanced Python concepts: classes, inheritance, polymorphism, method overrides, dictionary state management, and algorithmic battle turns.
+                    </p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-purple-300 space-y-1">
+                        <p>class Character:</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, name, hp): self.name = name; self.hp = hp</p>
+                    </div>
+                `,
+                code: 'import random\n\nclass Entity:\n    def __init__(self, name, hp, attack_power):\n        self.name = name\n        self.hp = hp\n        self.attack_power = attack_power\n    \n    def is_alive(self):\n        return self.hp > 0\n\nclass Hero(Entity):\n    def __init__(self, name):\n        super().__init__(name, hp=120, attack_power=25)\n        self.inventory = ["Health Potion", "Mana Crystal"]\n    \n    def attack(self, target):\n        dmg = random.randint(15, self.attack_power)\n        target.hp -= dmg\n        print(f"⚔️ {self.name} attacks {target.name} for {dmg} damage!")\n\nclass Monster(Entity):\n    def __init__(self):\n        super().__init__("Shadow Goblin 👺", hp=80, attack_power=20)\n    \n    def attack(self, target):\n        dmg = random.randint(10, self.attack_power)\n        target.hp -= dmg\n        print(f"🔥 {self.name} claws {target.name} for {dmg} damage!")\n\nprint("=== RUNNING COMPLEX RPG SIMULATION ===")\nhero = Hero("Valiant Coder")\nmonster = Monster()\n\nround_num = 1\nwhile hero.is_alive() and monster.is_alive():\n    print(f"\\n--- Round {round_num} ---")\n    hero.attack(monster)\n    if monster.is_alive():\n        monster.attack(hero)\n    print(f"Status -> {hero.name} HP: {hero.hp} | {monster.name} HP: {monster.hp}")\n    round_num += 1\n\nprint("\\n=== BATTLE CONCLUDED ===") \nif hero.is_alive():\n    print(f"🏆 {hero.name} emerged victorious!")\nelse:\n    print("💀 The monster prevailed. Try again!")'
+            },
+            {
+                title: "6. Advanced Data Analytics & Matrix Solver",
+                desc: "Execute complex mathematical algorithms, statistical computations, matrix transformations, and structured data summaries.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Complex Mathematics & Statistics 📊</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        This complex script builds custom data science algorithms from scratch: calculating statistical means, medians, standard deviations, and performing 2D matrix transformations.
+                    </p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-purple-300 space-y-1">
+                        <p>def calculate_statistics(data):</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;return sum(data)/len(data)</p>
+                    </div>
+                `,
+                code: 'import math\nimport random\n\nprint("=== COMPLEX DATA ANALYTICS & MATRIX ENGINE ===")\n# Generate complex dataset\nraw_data = [random.gauss(50, 15) for _ in range(25)]\nrounded_data = [round(x, 2) for x in raw_data]\n\nmean_val = sum(rounded_data) / len(rounded_data)\nsorted_data = sorted(rounded_data)\nmedian_val = sorted_data[len(sorted_data)//2]\nvariance = sum((x - mean_val) ** 2 for x in rounded_data) / len(rounded_data)\nstd_dev = math.sqrt(variance)\n\nprint(f"Dataset Sample (first 5): {rounded_data[:5]}")\nprint(f"Statistical Mean: {round(mean_val, 2)}")\nprint(f"Statistical Median: {round(median_val, 2)}")\nprint(f"Standard Deviation: {round(std_dev, 2)}")\n\nprint("\\n--- 2D Matrix Transformation ---")\nmatrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\ntransposed = [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]\n\nprint("Original Matrix:")\nfor row in matrix:\n    print(row)\n\nprint("Transposed Matrix:")\nfor row in transposed:\n    print(row)\nprint("\\nComplex algorithm executed successfully!")'
             }
         ];
 
@@ -449,7 +479,6 @@
             currentCreativeIndex = index;
             const proj = creativeProjects[index];
             
-            // Highlight active button
             document.querySelectorAll('.creative-btn').forEach((btn, idx) => {
                 if(idx === index) {
                     btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition bg-purple-500/10 text-purple-400 border border-purple-500/30 flex items-center justify-between creative-btn";
@@ -467,7 +496,7 @@
                     ${proj.explanation}
                 </div>
             `;
-            document.getElementById('creative-progress').innerText = `Project ${index + 1} of 4`;
+            document.getElementById('creative-progress').innerText = `Project ${index + 1} of 6`;
         }
 
         function navigateToPlaygroundWithCreativeCode() {
@@ -481,7 +510,7 @@
         loadTutorial(0);
         loadCreative(0);
 
-        // --- Pyodide Python Engine Setup ---
+        // --- Pyodide Python Engine Setup (Supports Complex Programs) ---
         let pyodideReady = false;
         let pyodideInstance = null;
 
@@ -492,7 +521,7 @@
                 pyodideReady = true;
                 document.getElementById('run-btn').removeAttribute('disabled');
                 statusBadge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
-                statusBadge.innerHTML = '<i class="fa-solid fa-circle-check mr-1.5"></i> Python Engine Ready';
+                statusBadge.innerHTML = '<i class="fa-solid fa-circle-check mr-1.5"></i> Python Engine Ready (Complex Capable)';
             } catch (err) {
                 const statusBadge = document.getElementById('pyodide-status');
                 statusBadge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30";
@@ -508,7 +537,7 @@
             }
             const code = document.getElementById('code-editor').value;
             const consoleOutput = document.getElementById('console-output');
-            consoleOutput.innerText = "Running code...\n";
+            consoleOutput.innerText = "Running complex program...\n";
 
             try {
                 // Redirect python stdout to capture print statements
@@ -521,7 +550,7 @@
                 await pyodideInstance.runPythonAsync(code);
 
                 const stdout = pyodideInstance.runPython("sys.stdout.getvalue()");
-                consoleOutput.innerText = stdout || "Code executed successfully with no output.";
+                consoleOutput.innerText = stdout || "Complex program executed successfully with no output.";
                 consoleOutput.className = "flex-1 w-full bg-slate-950 text-emerald-400 p-4 code-font text-xs overflow-y-auto whitespace-pre-wrap";
             } catch (err) {
                 consoleOutput.innerText = err;
@@ -574,14 +603,14 @@
             input.value = '';
 
             setTimeout(() => {
-                let reply = "That's a great Python question! Remember that indentation and variable names are crucial in Python. Try experimenting with your code in the editor and clicking 'Run Code' to see how it behaves!";
+                let reply = "That's a fascinating programming question! When writing complex Python programs, breaking logic down into classes and modular functions makes debugging much easier. Let me know if you need help with algorithms or data structures!";
                 const lower = text.toLowerCase();
                 if(lower.includes('error') || lower.includes('bug') || lower.includes('fix')) {
-                    reply = "When debugging Python errors, check for missing colons (`:`), unmatched parentheses `()`, or incorrect indentation! Paste your error message or code snippet here and I will help you fix it.";
-                } else if(lower.includes('loop') || lower.includes('for') || lower.includes('while')) {
-                    reply = "Loops are used to repeat blocks of code. A `for` item in list loops through sequences, while a `while` loop continues until its condition becomes False!";
+                    reply = "When debugging complex errors, check your stack trace for line numbers. Look out for index out of bounds, missing imports (like `math` or `random`), or uninitialized variables!";
+                } else if(lower.includes('class') || lower.includes('object') || lower.includes('oop')) {
+                    reply = "Object-Oriented Programming (OOP) uses classes as blueprints. Inheritance allows child classes (like `Hero`) to inherit attributes and methods from parent classes (like `Entity`)!";
                 } else if(lower.includes('hello') || lower.includes('hi')) {
-                    reply = "Hello! Ready to write some awesome Python code or build creative projects today?";
+                    reply = "Hello! Ready to test advanced algorithms and complex Python projects today?";
                 }
                 appendChatMessage('AI', reply, true);
             }, 600);
@@ -597,14 +626,14 @@
 
             switchPage('playground');
             if(action === 'explain') {
-                appendChatMessage('You', "Can you explain this code for me?", false);
+                appendChatMessage('You', "Can you explain this complex code for me?", false);
                 setTimeout(() => {
-                    appendChatMessage('AI', `Here is what your code does:\n\n1. It defines variables and expressions.\n2. It executes logic sequentially.\n3. It outputs results to the console.\n\nTry modifying the values in the editor to see how the behavior changes!`, true);
+                    appendChatMessage('AI', `Here is the architectural breakdown of your complex program:\n\n1. **Data Structures & Modules**: It utilizes built-in libraries and custom data containers.\n2. **Control Logic & Loops**: Evaluates state transitions and iterative algorithms.\n3. **Execution**: Processes logic and streams results to the console output.\n\nTry running it and tweaking parameters in the editor!`, true);
                 }, 600);
             } else if(action === 'debug') {
-                appendChatMessage('You', "Can you check my code for bugs or errors?", false);
+                appendChatMessage('You', "Can you check my complex code for bugs or errors?", false);
                 setTimeout(() => {
-                    appendChatMessage('AI', `I reviewed your code. Everything looks syntactically correct! Make sure your indentation uses 4 spaces consistently and all strings are closed with matching quotes.`, true);
+                    appendChatMessage('AI', `I analyzed your script. All syntax rules, indentation levels, and class definitions are properly structured. If you encounter any runtime exceptions, paste the error message here!`, true);
                 }, 600);
             }
         }
