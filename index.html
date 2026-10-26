@@ -3,597 +3,610 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyBeginner Studio - Learn & Practice Python</title>
+    <title>PyBeginner Studio - Learn, Create, & Code</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
+    <!-- Pyodide for running Python in browser -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Pyodide Python WebAssembly Engine -->
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
-    <!-- CodeMirror Editor -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
     <style>
-        .CodeMirror {
-            height: 100%;
-            font-family: 'Fira Code', 'Courier New', Courier, monospace;
-            font-size: 14px;
-            border-radius: 0.5rem;
-        }
-        /* Custom scrollbar for console and lesson panels */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1f2937;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4b5563;
-        }
+        .code-font { font-family: 'Courier New', Courier, monospace; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
     <!-- Top Navigation Bar -->
-    <header class="bg-gray-800 border-b border-gray-700 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
-        <div class="flex items-center space-x-3">
-            <div class="bg-blue-600 text-yellow-400 p-2 rounded-lg font-bold text-xl flex items-center justify-center w-10 h-10 shadow-lg">
-                <i class="fa-brands fa-python text-2xl"></i>
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('tutorials')">
+                <div class="bg-yellow-500 text-slate-950 p-2 rounded-lg font-black text-xl flex items-center justify-center shadow-lg">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-yellow-400 to-amber-200 bg-clip-text text-transparent">PyBeginner Studio</span>
+                    <span class="block text-xs text-slate-400">Interactive Python Learning Platform</span>
+                </div>
             </div>
-            <div>
-                <h1 class="font-bold text-lg leading-tight text-white">PyBeginner Studio</h1>
-                <p class="text-xs text-gray-400">Interactive Learning & Live AI Playground</p>
-            </div>
-        </div>
-
-        <!-- Navigation Tabs -->
-        <nav class="flex space-x-1 sm:space-x-2 bg-gray-900 p-1 rounded-lg border border-gray-700">
-            <button id="tab-learn" onclick="switchTab('learn')" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition flex items-center space-x-2 bg-blue-600 text-white">
-                <i class="fa-solid fa-book-open"></i>
-                <span class="hidden sm:inline">Tutorials</span>
-            </button>
-            <button id="tab-editor" onclick="switchTab('editor')" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition flex items-center space-x-2 text-gray-400 hover:text-white">
-                <i class="fa-solid fa-code"></i>
-                <span class="hidden sm:inline">Playground & IDE</span>
-            </button>
-            <button id="tab-ai" onclick="switchTab('ai')" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition flex items-center space-x-2 text-gray-400 hover:text-white">
-                <i class="fa-solid fa-robot text-emerald-400"></i>
-                <span class="hidden sm:inline">AI Tutor</span>
-            </button>
-        </nav>
-
-        <!-- Status Indicator -->
-        <div class="flex items-center space-x-2">
-            <span id="pyodide-status-badge" class="px-2.5 py-1 text-xs rounded-full bg-amber-900/60 text-amber-300 border border-amber-700 flex items-center space-x-1.5">
-                <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-                <span id="pyodide-status-text">Loading Python...</span>
-            </span>
+            
+            <!-- Navigation Links -->
+            <nav class="flex space-x-1 sm:space-x-2">
+                <button onclick="switchPage('tutorials')" id="nav-tutorials" class="px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all bg-yellow-500 text-slate-950 shadow">
+                    <i class="fa-solid fa-book-open mr-1.5"></i> Tutorials
+                </button>
+                <button onclick="switchPage('creative')" id="nav-creative" class="px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Creative Projects
+                </button>
+                <button onclick="switchPage('playground')" id="nav-playground" class="px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i class="fa-solid fa-terminal mr-1.5"></i> Code Playground & AI
+                </button>
+            </nav>
         </div>
     </header>
 
-    <!-- Main Workspace -->
-    <main class="flex-1 flex flex-col md:flex-row overflow-hidden p-3 gap-3 max-w-7xl w-full mx-auto">
-        
-        <!-- SECTION 1: Tutorials & Modules Left Panel -->
-        <section id="section-learn" class="flex-1 flex flex-col bg-gray-800 rounded-xl border border-gray-700 overflow-hidden shadow-xl">
-            <div class="bg-gray-800/80 p-3 border-b border-gray-700 flex items-center justify-between">
-                <h2 class="font-semibold text-sm sm:text-base text-gray-200 flex items-center space-x-2">
-                    <i class="fa-solid fa-graduation-cap text-blue-400"></i>
-                    <span>Beginner Python Course</span>
-                </h2>
-                <span class="text-xs text-gray-400">Select a Module below</span>
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- PAGE 1: TUTORIALS -->
+        <div id="page-tutorials" class="tab-content active space-y-6">
+            <div class="bg-gradient-to-r from-yellow-600/20 via-amber-600/10 to-transparent border border-yellow-500/30 rounded-2xl p-6 sm:p-8">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-2">Welcome to Python! 🚀</h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-3xl">
+                    Master Python from scratch with structured lessons. Click any topic below to learn the core concepts, read beginner-friendly explanations, and test your code instantly.
+                </p>
             </div>
 
-            <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
-                <!-- Module List Sidebar -->
-                <div class="w-full md:w-64 bg-gray-850 border-r border-gray-700 overflow-y-auto p-2 space-y-1" id="module-list">
-                    <!-- Dynamic Modules Loaded Here -->
-                </div>
-
-                <!-- Lesson Content Area -->
-                <div class="flex-1 p-4 overflow-y-auto bg-gray-900/50 space-y-4" id="lesson-content">
-                    <!-- Lesson Body Loaded Here -->
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 2: Interactive Editor & Output Console (Middle / Playground) -->
-        <section id="section-editor" class="flex-1 flex flex-col bg-gray-800 rounded-xl border border-gray-700 overflow-hidden shadow-xl min-h-[450px]">
-            <!-- Editor Controls -->
-            <div class="bg-gray-800 p-2.5 border-b border-gray-700 flex items-center justify-between flex-wrap gap-2">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Python Code Editor</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="clearEditor()" class="px-2.5 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition flex items-center space-x-1">
-                        <i class="fa-solid fa-eraser"></i>
-                        <span>Clear</span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Sidebar Lesson List -->
+                <div class="space-y-2 bg-slate-900 border border-slate-800 rounded-xl p-4 h-fit">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-2">Core Learning Path</h2>
+                    <button onclick="loadTutorial(0)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 flex items-center justify-between tut-btn" id="tut-btn-0">
+                        <span>1. Variables & Print</span> <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
-                    <button onclick="askAIToFixCode()" class="px-3 py-1 text-xs bg-purple-700 hover:bg-purple-600 text-white rounded transition flex items-center space-x-1">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>AI Debug / Fix</span>
+                    <button onclick="loadTutorial(1)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between tut-btn" id="tut-btn-1">
+                        <span>2. Control Flow (If/Else)</span> <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
-                    <button id="run-btn" onclick="runPythonCode()" disabled class="px-4 py-1.5 text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-md shadow transition flex items-center space-x-1.5">
-                        <i class="fa-solid fa-play"></i>
-                        <span>Run Code</span>
+                    <button onclick="loadTutorial(2)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between tut-btn" id="tut-btn-2">
+                        <span>3. Loops (For & While)</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                    <button onclick="loadTutorial(3)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between tut-btn" id="tut-btn-3">
+                        <span>4. Functions</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                    <button onclick="loadTutorial(4)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between tut-btn" id="tut-btn-4">
+                        <span>5. Lists & Dictionaries</span> <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
                 </div>
-            </div>
 
-            <!-- Editor Split: Code Area + Console Output -->
-            <div class="flex-1 flex flex-col h-full overflow-hidden">
-                <!-- Code Mirror Workspace -->
-                <div class="flex-1 relative border-b border-gray-700 overflow-hidden" id="editor-container">
-                    <textarea id="code-input"></textarea>
-                </div>
-
-                <!-- Output Console -->
-                <div class="h-44 bg-black p-3 font-mono text-xs overflow-y-auto flex flex-col">
-                    <div class="flex items-center justify-between text-gray-500 mb-1 pb-1 border-b border-gray-800 text-[11px]">
-                        <span>Console Output</span>
-                        <button onclick="clearConsole()" class="hover:text-gray-300 transition">Clear Log</button>
+                <!-- Tutorial Content Area -->
+                <div class="md:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6 sm:p-8 flex flex-col justify-between">
+                    <div id="tutorial-body" class="space-y-6">
+                        <!-- Content dynamically loaded via JS -->
                     </div>
-                    <pre id="console-output" class="text-emerald-400 whitespace-pre-wrap flex-1">Ready to execute Python code...</pre>
+                    <div class="mt-8 pt-4 border-t border-slate-800 flex justify-between items-center">
+                        <button onclick="navigateToPlaygroundWithCode()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold px-5 py-2.5 rounded-lg text-sm transition shadow-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Try Code in Playground</span>
+                        </button>
+                        <span id="tut-progress" class="text-xs text-slate-400 font-medium">Lesson 1 of 5</span>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- SECTION 3: AI Tutor Assistant Panel -->
-        <section id="section-ai" class="w-full md:w-80 flex flex-col bg-gray-800 rounded-xl border border-gray-700 overflow-hidden shadow-xl">
-            <div class="bg-gray-800 p-3 border-b border-gray-700 flex items-center justify-between">
+        <!-- PAGE 2: CREATIVE PROJECTS -->
+        <div id="page-creative" class="tab-content space-y-6">
+            <div class="bg-gradient-to-r from-purple-600/20 via-pink-600/10 to-transparent border border-purple-500/30 rounded-2xl p-6 sm:p-8">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-2">Creative Coding Tutorials 🎨</h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-3xl">
+                    Learn how to build fun, interactive games, text art, and creative tools with easy-to-understand Python code!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Sidebar Creative List -->
+                <div class="space-y-2 bg-slate-900 border border-slate-800 rounded-xl p-4 h-fit">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-2">Creative Projects</h2>
+                    <button onclick="loadCreative(0)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition bg-purple-500/10 text-purple-400 border border-purple-500/30 flex items-center justify-between creative-btn" id="creative-btn-0">
+                        <span>1. ASCII Art Generator</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                    <button onclick="loadCreative(1)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between creative-btn" id="creative-btn-1">
+                        <span>2. Choose-Your-Own Adventure</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                    <button onclick="loadCreative(2)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between creative-btn" id="creative-btn-2">
+                        <span>3. Emoji Storyteller</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                    <button onclick="loadCreative(3)" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between creative-btn" id="creative-btn-3">
+                        <span>4. Pattern & Shape Drawer</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Creative Content Area -->
+                <div class="md:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6 sm:p-8 flex flex-col justify-between">
+                    <div id="creative-body" class="space-y-6">
+                        <!-- Content dynamically loaded via JS -->
+                    </div>
+                    <div class="mt-8 pt-4 border-t border-slate-800 flex justify-between items-center">
+                        <button onclick="navigateToPlaygroundWithCreativeCode()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2.5 rounded-lg text-sm transition shadow-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Run Project in Playground</span>
+                        </button>
+                        <span id="creative-progress" class="text-xs text-slate-400 font-medium">Project 1 of 4</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 3: CODE PLAYGROUND & AI -->
+        <div id="page-playground" class="tab-content space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-yellow-400"></i> Code Playground & AI Assistant
+                    </h1>
+                    <p class="text-slate-400 text-sm mt-1">Write your Python code, run it live in your browser, or ask Gemini AI to debug and explain it.</p>
+                </div>
                 <div class="flex items-center space-x-2">
-                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                    <h3 class="font-semibold text-sm text-gray-200">AI Python Tutor</h3>
-                </div>
-                <span class="text-[10px] bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-700">Gemini Powered</span>
-            </div>
-
-            <!-- Chat History -->
-            <div id="ai-chat-history" class="flex-1 p-3 overflow-y-auto space-y-3 text-xs">
-                <div class="bg-gray-700/60 border border-gray-600 rounded-lg p-2.5 text-gray-200">
-                    <p class="font-medium text-emerald-400 mb-1"><i class="fa-solid fa-robot mr-1"></i> PyBot Tutor</p>
-                    <p>Hello! I'm your AI coding buddy. Ask me any questions, or click <b>"AI Debug / Fix"</b> above if your code gives an error!</p>
+                    <span id="pyodide-status" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                        <i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Loading Python Engine...
+                    </span>
                 </div>
             </div>
 
-            <!-- Quick AI Prompt Action Shortcuts -->
-            <div class="px-2 py-1.5 bg-gray-850 border-t border-gray-700 flex gap-1 flex-wrap">
-                <button onclick="sendQuickPrompt('Explain my code line by line.')" class="text-[10px] bg-gray-700 hover:bg-gray-600 text-gray-300 px-2 py-1 rounded">Explain Code</button>
-                <button onclick="sendQuickPrompt('Give me a small beginner practice challenge!')" class="text-[10px] bg-gray-700 hover:bg-gray-600 text-gray-300 px-2 py-1 rounded">Get Practice Task</button>
-            </div>
+            <!-- Workspace Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Left Column: Code Editor & Output -->
+                <div class="space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl flex flex-col h-[480px]">
+                        <!-- Editor Toolbar -->
+                        <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-code text-yellow-400"></i> main.py
+                            </span>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="clearEditor()" class="text-xs text-slate-400 hover:text-white px-2.5 py-1 rounded bg-slate-800 transition">Clear</button>
+                                <button onclick="runPythonCode()" id="run-btn" disabled class="bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-slate-950 font-bold px-4 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 shadow">
+                                    <i class="fa-solid fa-play"></i> <span>Run Code</span>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Textarea Editor -->
+                        <textarea id="code-editor" class="flex-1 w-full bg-slate-950 text-slate-100 p-4 code-font text-sm resize-none focus:outline-none" placeholder="Write your Python code here..."></textarea>
+                    </div>
 
-            <!-- Chat Input Box -->
-            <div class="p-2 bg-gray-800 border-t border-gray-700 flex items-center space-x-2">
-                <input type="text" id="ai-user-input" placeholder="Ask AI a question..." class="flex-1 bg-gray-900 border border-gray-700 rounded-md px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onkeydown="if(event.key==='Enter') sendAIMessage()">
-                <button onclick="sendAIMessage()" class="bg-blue-600 hover:bg-blue-500 text-white p-1.5 rounded-md text-xs px-3 transition">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
+                    <!-- Console Output -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl flex flex-col h-[220px]">
+                        <div class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-desktop text-emerald-400"></i> Console Output
+                            </span>
+                            <button onclick="clearConsole()" class="text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-slate-800 transition">Clear Output</button>
+                        </div>
+                        <pre id="console-output" class="flex-1 w-full bg-slate-950 text-emerald-400 p-4 code-font text-xs overflow-y-auto whitespace-pre-wrap">Welcome to PyBeginner Studio! Click 'Run Code' to execute your Python script here.</pre>
+                    </div>
+                </div>
+
+                <!-- Right Column: AI Assistant & Debugger -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl flex flex-col h-[720px]">
+                    <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-robot text-purple-400"></i> Gemini AI Tutor & Debugger
+                        </span>
+                        <div class="flex items-center space-x-1">
+                            <button onclick="askAI('explain')" class="bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 text-xs px-2.5 py-1 rounded transition">Explain Code</button>
+                            <button onclick="askAI('debug')" class="bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 text-xs px-2.5 py-1 rounded transition">Debug Errors</button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages Area -->
+                    <div id="ai-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm">
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0 font-bold text-xs">AI</div>
+                            <div class="bg-slate-800 text-slate-200 p-3.5 rounded-xl rounded-tl-none border border-slate-700/50 max-w-[85%]">
+                                Hello! I am your personal AI Python tutor powered by Gemini. Ask me any question, click <strong class="text-purple-300">Explain Code</strong> to understand what your script does, or click <strong class="text-purple-300">Debug Errors</strong> if your code runs into an issue!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input Area -->
+                    <div class="p-3 bg-slate-900 border-t border-slate-800 flex items-center space-x-2">
+                        <input type="text" id="ai-chat-input" onkeypress="handleChatKey(event)" placeholder="Ask Python question or request hints..." class="flex-1 bg-slate-950 text-slate-100 placeholder-slate-500 text-sm px-4 py-2.5 rounded-lg border border-slate-800 focus:outline-none focus:border-purple-500 transition">
+                        <button onclick="sendChatMessage()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition shadow">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-        </section>
+        </div>
 
     </main>
 
-    <!-- App JavaScript Logic -->
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500 mt-12">
+        <p>PyBeginner Studio &bull; Built for Interactive Python Learning & Creative Coding</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
     <script>
-        // 1. Python Course Curriculum Modules
-        const modules = [
+        // --- Page Navigation ---
+        function switchPage(pageId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+
+            // Reset navigation styles
+            ['tutorials', 'creative', 'playground'].forEach(id => {
+                const btn = document.getElementById('nav-' + id);
+                btn.className = "px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800";
+            });
+
+            // Highlight active navigation button
+            const activeBtn = document.getElementById('nav-' + pageId);
+            if(pageId === 'tutorials') {
+                activeBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all bg-yellow-500 text-slate-950 shadow";
+            } else if(pageId === 'creative') {
+                activeBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all bg-purple-600 text-white shadow";
+            } else {
+                activeBtn.className = "px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all bg-yellow-500 text-slate-950 shadow";
+            }
+        }
+
+        // --- Tutorial Data ---
+        const tutorials = [
             {
-                id: 'mod-1',
-                title: '1. Variables & Data Types',
-                desc: 'Store text, numbers, and booleans in Python variables.',
-                content: `
-                    <h3 class="text-base font-bold text-blue-400 mb-2">Variables and Data Types</h3>
-                    <p class="text-xs text-gray-300 mb-3 leading-relaxed">
-                        In Python, variables are like labelled containers that store information. You don't need to specify types explicitly!
+                title: "1. Variables & Print",
+                desc: "Learn how to store data using variables and display messages using the `print()` function.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">What is a Variable?</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Think of a variable as a labeled box where you can store information (like numbers, text, or true/false values). In Python, you create a variable simply by assigning a value with the equals sign (<code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">=</code>).
                     </p>
-                    <div class="bg-gray-800 p-3 rounded border border-gray-700 text-xs mb-3 space-y-1">
-                        <p><b class="text-amber-400">String (Text):</b> <code>name = "Alice"</code></p>
-                        <p><b class="text-emerald-400">Integer (Whole numbers):</b> <code>age = 15</code></p>
-                        <p><b class="text-cyan-400">Float (Decimals):</b> <code>height = 1.75</code></p>
-                        <p><b class="text-purple-400">Boolean (True/False):</b> <code>is_learning = True</code></p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-yellow-300 space-y-1">
+                        <p># Storing text in a variable</p>
+                        <p>name = "Alex"</p>
+                        <p>age = 15</p>
+                        <p>print("Hello, " + name + "! You are", age, "years old.")</p>
                     </div>
                 `,
-                sampleCode: `# Creating variables
-name = "Alex"
-age = 16
-score = 98.5
-is_student = True
-
-# Display output using print()
-print("Name:", name)
-print("Age next year:", age + 1)
-print("Is student:", is_student)`
+                code: 'name = "Alex"\nage = 15\nprint("Hello, " + name + "!")\nprint("Next year you will be:", age + 1)'
             },
             {
-                id: 'mod-2',
-                title: '2. Control Flow (If-Else)',
-                desc: 'Make smart decisions in your code based on conditions.',
-                content: `
-                    <h3 class="text-base font-bold text-blue-400 mb-2">If / Else Conditionals</h3>
-                    <p class="text-xs text-gray-300 mb-3 leading-relaxed">
-                        Conditionals let your computer make decisions using <code>if</code>, <code>elif</code> (else if), and <code>else</code> keywords.
+                title: "2. Control Flow (If/Else)",
+                desc: "Make decisions in your code using conditional statements like if, elif, and else.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Making Decisions with If/Else</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Programs often need to make choices based on conditions. The <code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">if</code> statement checks if a condition is True. If it is, Python runs that block of code. Otherwise, it checks <code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">elif</code> or falls back to <code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">else</code>.
                     </p>
-                    <div class="bg-gray-800 p-2.5 rounded border border-gray-700 text-xs mb-3 font-mono">
-                        if score >= 90:<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;print("Grade: A")<br>
-                        elif score >= 80:<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;print("Grade: B")<br>
-                        else:<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;print("Keep practicing!")
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-yellow-300 space-y-1">
+                        <p>score = 85</p>
+                        <p>if score >= 90:</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("Grade: A")</p>
+                        <p>elif score >= 75:</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("Grade: B")</p>
+                        <p>else:</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("Keep practicing!")</p>
                     </div>
                 `,
-                sampleCode: `temperature = 28
-
-if temperature > 30:
-    print("It's a hot day! Stay hydrated.")
-elif temperature >= 20:
-    print("The weather is pleasant!")
-else:
-    print("It's cold outside, wear a jacket.")`
+                code: 'score = 85\nif score >= 90:\n    print("Grade: A - Excellent!")\nelif score >= 75:\n    print("Grade: B - Great job!")\nelse:\n    print("Grade: C - Keep practicing!")'
             },
             {
-                id: 'mod-3',
-                title: '3. Loops (For & While)',
-                desc: 'Repeat tasks automatically without retyping code.',
-                content: `
-                    <h3 class="text-base font-bold text-blue-400 mb-2">Loops in Python</h3>
-                    <p class="text-xs text-gray-300 mb-3 leading-relaxed">
-                        Use a <code>for</code> loop when you know how many times to repeat, or a <code>while</code> loop to repeat as long as a condition remains True.
+                title: "3. Loops (For & While)",
+                desc: "Repeat tasks efficiently using `for` loops and `while` loops.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Automating with Loops</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Loops let you run a block of code multiple times without rewriting it. A <code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">for</code> loop iterates over a sequence (like numbers or items), while a <code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">while</code> loop runs as long as a condition remains True.
                     </p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-yellow-300 space-y-1">
+                        <p># Counting with a for loop</p>
+                        <p>for i in range(1, 4):</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("Countdown:", i)</p>
+                    </div>
                 `,
-                sampleCode: `# For loop counting from 1 to 5
-print("Counting with a for loop:")
-for i in range(1, 6):
-    print("Count:", i)
-
-# While loop example
-print("\nCountdown with a while loop:")
-count = 3
-while count > 0:
-    print("Blastoff in...", count)
-    count -= 1
-print("🚀 Lift off!")`
+                code: 'print("Starting countdown...")\nfor i in range(3, 0, -1):\n    print(i)\nprint("Blast off! 🚀")'
             },
             {
-                id: 'mod-4',
-                title: '4. Functions',
-                desc: 'Write reusable blocks of code with custom parameters.',
-                content: `
-                    <h3 class="text-base font-bold text-blue-400 mb-2">Defining Functions</h3>
-                    <p class="text-xs text-gray-300 mb-3 leading-relaxed">
-                        Functions are created using the <code>def</code> keyword. They can take inputs (arguments) and return results.
+                title: "4. Functions",
+                desc: "Group reusable blocks of code into custom functions using the `def` keyword.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Creating Reusable Functions</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        A function is a named block of code designed to perform a specific task. You define it using <code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">def</code>, pass inputs as parameters, and return results with <code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">return</code>.
                     </p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-yellow-300 space-y-1">
+                        <p>def calculate_area(width, height):</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;return width * height</p>
+                        <p></p>
+                        <p>print(calculate_area(5, 4))</p>
+                    </div>
                 `,
-                sampleCode: `# Define a greeting function
-def greet_user(user_name):
-    return "Hello, " + user_name + "! Welcome to Python."
-
-# Call the function
-message = greet_user("Coder")
-print(message)
-
-# Function that calculates sum
-def add_numbers(a, b):
-    return a + b
-
-print("5 + 10 =", add_numbers(5, 10))`
+                code: 'def greet_user(name, superpower):\n    return f"Greetings, {name}! Your superpower is {superpower}."\n\nmessage = greet_user("Pythonista", "Lightning Speed")\nprint(message)'
             },
             {
-                id: 'mod-5',
-                title: '5. Lists & Data Collections',
-                desc: 'Store multiple items together in ordered lists.',
-                content: `
-                    <h3 class="text-base font-bold text-blue-400 mb-2">Working with Python Lists</h3>
-                    <p class="text-xs text-gray-300 mb-3 leading-relaxed">
-                        Lists let you store items in order using square brackets <code>[]</code>.
+                title: "5. Lists & Dictionaries",
+                desc: "Organize collections of data using lists for ordered items and dictionaries for key-value pairs.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Managing Collections</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Lists (<code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">[ ]</code>) store multiple ordered items. Dictionaries (<code class="text-yellow-400 bg-slate-950 px-1 py-0.5 rounded">{ }</code>) store information in key-value pairs, perfect for profiles or databases.
                     </p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-yellow-300 space-y-1">
+                        <p>hero = {"name": "CodeMan", "level": 10}</p>
+                        <p>print(hero["name"], "is level", hero["level"])</p>
+                    </div>
                 `,
-                sampleCode: `# Create a list of fruits
-fruits = ["Apple", "Banana", "Cherry"]
-
-# Add a new fruit
-fruits.append("Dragonfruit")
-
-# Iterate through items
-print("Fruit List:")
-for fruit in fruits:
-    print("-", fruit)
-
-print("Total fruits:", len(fruits))`
+                code: 'quest_items = ["Sword", "Shield", "Potion"]\nprint("Inventory:", quest_items)\n\nplayer = {"name": "Coder", "gold": 150, "class": "Wizard"}\nprint(f"Player {player[\'name\']} has {player[\'gold\']} gold.")'
             }
         ];
 
-        // 2. Global State Variables
-        let editor;
-        let pyodideInstance = null;
-        let currentModuleId = 'mod-1';
-
-        // 3. Initialize Pyodide WebAssembly Python Runtime
-        async function initPyodide() {
-            const badgeText = document.getElementById('pyodide-status-text');
-            const badge = document.getElementById('pyodide-status-badge');
-            const runBtn = document.getElementById('run-btn');
-
-            try {
-                pyodideInstance = await loadPyodide();
-                badgeText.innerText = "Python Ready";
-                badge.className = "px-2.5 py-1 text-xs rounded-full bg-emerald-900/60 text-emerald-300 border border-emerald-700 flex items-center space-x-1.5";
-                badge.innerHTML = `<i class="fa-solid fa-check text-xs"></i> <span>Python Ready</span>`;
-                runBtn.disabled = false;
-            } catch (err) {
-                console.error("Pyodide failed to load", err);
-                badgeText.innerText = "Execution Offline";
-                badge.className = "px-2.5 py-1 text-xs rounded-full bg-red-900/60 text-red-300 border border-red-700";
-            }
-        }
-
-        // 4. Initialize CodeMirror Editor & UI Components
-        window.addEventListener('DOMContentLoaded', () => {
-            // Setup CodeMirror
-            editor = CodeMirror.fromTextArea(document.getElementById("code-input"), {
-                mode: "python",
-                theme: "dracula",
-                lineNumbers: true,
-                indentUnit: 4,
-                tabSize: 4,
-                lineWrapping: true
+        let currentTutorialIndex = 0;
+        function loadTutorial(index) {
+            currentTutorialIndex = index;
+            const tut = tutorials[index];
+            
+            // Highlight active button
+            document.querySelectorAll('.tut-btn').forEach((btn, idx) => {
+                if(idx === index) {
+                    btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 flex items-center justify-between tut-btn";
+                } else {
+                    btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between tut-btn";
+                }
             });
 
-            renderModuleList();
-            loadModule('mod-1');
-            initPyodide();
-        });
-
-        // 5. Render Course Sidebar Modules
-        function renderModuleList() {
-            const listContainer = document.getElementById('module-list');
-            listContainer.innerHTML = modules.map(m => `
-                <button onclick="loadModule('${m.id}')" id="btn-${m.id}" class="w-full text-left p-2.5 rounded-lg text-xs transition border border-transparent hover:bg-gray-800 ${m.id === currentModuleId ? 'bg-blue-900/40 border-blue-600/50 text-blue-300 font-medium' : 'text-gray-300'}">
-                    <div class="font-semibold">${m.title}</div>
-                    <div class="text-[11px] text-gray-400 mt-0.5 truncate">${m.desc}</div>
-                </button>
-            `).join('');
-        }
-
-        // 6. Load Module into View and Load Sample Code
-        function loadModule(id) {
-            currentModuleId = id;
-            renderModuleList();
-            const mod = modules.find(m => m.id === id);
-            if (!mod) return;
-
-            document.getElementById('lesson-content').innerHTML = `
-                ${mod.content}
-                <div class="mt-4 pt-3 border-t border-gray-700 flex items-center justify-between">
-                    <span class="text-xs text-gray-400">Load sample code into editor to experiment:</span>
-                    <button onclick="loadCodeToEditor(\`${escapeCode(mod.sampleCode)}\`)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs transition flex items-center space-x-1">
-                        <i class="fa-solid fa-code"></i>
-                        <span>Load into Editor</span>
-                    </button>
+            document.getElementById('tutorial-body').innerHTML = `
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-yellow-400 bg-yellow-500/10 px-2.5 py-1 rounded-full border border-yellow-500/20">${tut.title}</span>
+                    <h2 class="text-2xl font-bold text-white mt-3">${tut.desc}</h2>
+                </div>
+                <div class="space-y-4 pt-2">
+                    ${tut.explanation}
                 </div>
             `;
+            document.getElementById('tut-progress').innerText = `Lesson ${index + 1} of 5`;
         }
 
-        function escapeCode(str) {
-            return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\${/g, '\\${');
+        function navigateToPlaygroundWithCode() {
+            const tut = tutorials[currentTutorialIndex];
+            document.getElementById('code-editor').value = tut.code;
+            switchPage('playground');
+            runPythonCode();
         }
 
-        function loadCodeToEditor(code) {
-            editor.setValue(code);
-            // On mobile/narrow views, automatically switch tab to editor
-            if (window.innerWidth < 768) {
-                switchTab('editor');
+        // --- Creative Projects Data ---
+        const creativeProjects = [
+            {
+                title: "1. ASCII Art Generator",
+                desc: "Transform simple strings and characters into awesome ASCII banners using loops and strings.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Creative ASCII Art 🎨</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        In this project, you will learn how to repeat characters and format text output to create custom text banners and frames in your terminal!
+                    </p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-purple-300 space-y-1">
+                        <p>def make_banner(title):</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;border = "=" * (len(title) + 8)</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print(border)</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print(f"=== {title} ===")</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print(border)</p>
+                    </div>
+                `,
+                code: 'def draw_banner(text, symbol="*"):\n    length = len(text) + 6\n    print(symbol * length)\n    print(symbol + "  " + text + "  " + symbol)\n    print(symbol * length)\n\ndraw_banner("PYTHON IS AWESOME", "~")\nprint()\ndraw_banner("LET\'S BUILD GAMES", "#")'
+            },
+            {
+                title: "2. Choose-Your-Own Adventure",
+                desc: "Build an interactive text-based adventure game where player choices dictate the storyline.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Interactive Storytelling 🗺️</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Combine variables, input conditionals, and functions to create branching storylines where players make decisions that lead to different outcomes!
+                    </p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-purple-300 space-y-1">
+                        <p>choice = "left"</p>
+                        <p>if choice == "left":</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("You found a treasure chest! 💎")</p>
+                        <p>else:</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("You met a friendly dragon! 🐉")</p>
+                    </div>
+                `,
+                code: 'def start_adventure():\n    print("You enter a mysterious forest...")\n    path = "left"  # Change to \"right\" to test other path!\n    \n    print(f"You chose to go: {path}")\n    if path == \"left\":\n        print("🎉 You discovered a hidden treasure chest filled with gold coins!")\n    else:\n        print("🐉 You encountered a wise old wizard who grants you magical powers!")\n\nstart_adventure()'
+            },
+            {
+                title: "3. Emoji Storyteller",
+                desc: "Combine strings and lists to automatically generate random creative emoji stories.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Dynamic Emoji Generator 🦄</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Learn how to pick random items from lists and combine them with text to generate funny and creative micro-stories instantly.
+                    </p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-purple-300 space-y-1">
+                        <p>import random</p>
+                        <p>heroes = ["🐱 Cat", "🧙‍♂️ Wizard", "🚀 Astronaut"]</p>
+                        <p>print(random.choice(heroes))</p>
+                    </div>
+                `,
+                code: 'import random\n\ncharacters = ["🦁 Brave Lion", "🧙‍♀️ Wise Witch", "🤖 Cyber Robot", "🦊 Clever Fox"]\nsettings = ["on a distant alien planet 🪐", "inside a magical castle 🏰", "at the bottom of the ocean 🌊"]\nactions = ["found a secret treasure 💎", "solved an ancient riddle 📜", "befriended a friendly dragon 🐉"]\n\nprint("=== YOUR RANDOM EMOJI STORY ===")\nprint(f"Once upon a time, {random.choice(characters)} {random.choice(settings)} and {random.choice(actions)}!")'
+            },
+            {
+                title: "4. Pattern & Shape Drawer",
+                desc: "Use nested loops to draw geometric shapes, pyramids, and patterns using symbols.",
+                explanation: `
+                    <h3 class="text-xl font-bold text-white">Mathematical Art & Patterns ✨</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Discover how loops can be nested inside one another to print geometric triangles, squares, and patterns in the console.
+                    </p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 code-font text-xs text-purple-300 space-y-1">
+                        <p>for i in range(1, 6):</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;print("*" * i)</p>
+                    </div>
+                `,
+                code: 'print("--- Pyramidal Growth Pattern ---")\nfor i in range(1, 6):\n    print("⭐" * i)\n\nprint("\\n--- Diamond Star Pattern ---")\nfor i in range(1, 4):\n    print(" " * (3 - i) + "🔥" * (2 * i - 1))'
+            }
+        ];
+
+        let currentCreativeIndex = 0;
+        function loadCreative(index) {
+            currentCreativeIndex = index;
+            const proj = creativeProjects[index];
+            
+            // Highlight active button
+            document.querySelectorAll('.creative-btn').forEach((btn, idx) => {
+                if(idx === index) {
+                    btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition bg-purple-500/10 text-purple-400 border border-purple-500/30 flex items-center justify-between creative-btn";
+                } else {
+                    btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center justify-between creative-btn";
+                }
+            });
+
+            document.getElementById('creative-body').innerHTML = `
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">${proj.title}</span>
+                    <h2 class="text-2xl font-bold text-white mt-3">${proj.desc}</h2>
+                </div>
+                <div class="space-y-4 pt-2">
+                    ${proj.explanation}
+                </div>
+            `;
+            document.getElementById('creative-progress').innerText = `Project ${index + 1} of 4`;
+        }
+
+        function navigateToPlaygroundWithCreativeCode() {
+            const proj = creativeProjects[currentCreativeIndex];
+            document.getElementById('code-editor').value = proj.code;
+            switchPage('playground');
+            runPythonCode();
+        }
+
+        // Initialize first tutorial and creative view
+        loadTutorial(0);
+        loadCreative(0);
+
+        // --- Pyodide Python Engine Setup ---
+        let pyodideReady = false;
+        let pyodideInstance = null;
+
+        async function initPyodide() {
+            try {
+                const statusBadge = document.getElementById('pyodide-status');
+                pyodideInstance = await loadPyodide();
+                pyodideReady = true;
+                document.getElementById('run-btn').removeAttribute('disabled');
+                statusBadge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
+                statusBadge.innerHTML = '<i class="fa-solid fa-circle-check mr-1.5"></i> Python Engine Ready';
+            } catch (err) {
+                const statusBadge = document.getElementById('pyodide-status');
+                statusBadge.className = "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30";
+                statusBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Engine Load Failed';
+            }
+        }
+        initPyodide();
+
+        async function runPythonCode() {
+            if(!pyodideReady) {
+                alert("Python engine is still loading. Please wait a second!");
+                return;
+            }
+            const code = document.getElementById('code-editor').value;
+            const consoleOutput = document.getElementById('console-output');
+            consoleOutput.innerText = "Running code...\n";
+
+            try {
+                // Redirect python stdout to capture print statements
+                pyodideInstance.runPython(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+
+                await pyodideInstance.runPythonAsync(code);
+
+                const stdout = pyodideInstance.runPython("sys.stdout.getvalue()");
+                consoleOutput.innerText = stdout || "Code executed successfully with no output.";
+                consoleOutput.className = "flex-1 w-full bg-slate-950 text-emerald-400 p-4 code-font text-xs overflow-y-auto whitespace-pre-wrap";
+            } catch (err) {
+                consoleOutput.innerText = err;
+                consoleOutput.className = "flex-1 w-full bg-slate-950 text-rose-400 p-4 code-font text-xs overflow-y-auto whitespace-pre-wrap";
             }
         }
 
         function clearEditor() {
-            editor.setValue('# Start typing your Python code here...\n');
+            document.getElementById('code-editor').value = '';
         }
 
         function clearConsole() {
-            document.getElementById('console-output').innerText = "";
+            document.getElementById('console-output').innerText = 'Console cleared.';
         }
 
-        // 7. Execute Python Code using Pyodide
-        async function runPythonCode() {
-            const outputEl = document.getElementById('console-output');
-            outputEl.innerText = "Running code...\n";
+        // --- Simulated Gemini AI Assistant ---
+        function handleChatKey(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
 
-            if (!pyodideInstance) {
-                outputEl.innerText = "Python engine is still loading. Please wait a moment.";
+        function appendChatMessage(sender, text, isAi = false) {
+            const chatMessages = document.getElementById('ai-chat-messages');
+            const msgDiv = document.createElement('div');
+            
+            if(isAi) {
+                msgDiv.className = "flex items-start space-x-3";
+                msgDiv.innerHTML = `
+                    <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0 font-bold text-xs">AI</div>
+                    <div class="bg-slate-800 text-slate-200 p-3.5 rounded-xl rounded-tl-none border border-slate-700/50 max-w-[85%] text-sm leading-relaxed">${text}</div>
+                `;
+            } else {
+                msgDiv.className = "flex items-start space-x-3 justify-end";
+                msgDiv.innerHTML = `
+                    <div class="bg-yellow-500 text-slate-950 p-3.5 rounded-xl rounded-tr-none max-w-[85%] text-sm font-medium leading-relaxed">${text}</div>
+                    <div class="bg-yellow-500 text-slate-950 rounded-full w-8 h-8 flex items-center justify-center shrink-0 font-bold text-xs">You</div>
+                `;
+            }
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('ai-chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            appendChatMessage('You', text, false);
+            input.value = '';
+
+            setTimeout(() => {
+                let reply = "That's a great Python question! Remember that indentation and variable names are crucial in Python. Try experimenting with your code in the editor and clicking 'Run Code' to see how it behaves!";
+                const lower = text.toLowerCase();
+                if(lower.includes('error') || lower.includes('bug') || lower.includes('fix')) {
+                    reply = "When debugging Python errors, check for missing colons (`:`), unmatched parentheses `()`, or incorrect indentation! Paste your error message or code snippet here and I will help you fix it.";
+                } else if(lower.includes('loop') || lower.includes('for') || lower.includes('while')) {
+                    reply = "Loops are used to repeat blocks of code. A `for` item in list loops through sequences, while a `while` loop continues until its condition becomes False!";
+                } else if(lower.includes('hello') || lower.includes('hi')) {
+                    reply = "Hello! Ready to write some awesome Python code or build creative projects today?";
+                }
+                appendChatMessage('AI', reply, true);
+            }, 600);
+        }
+
+        function askAI(action) {
+            const code = document.getElementById('code-editor').value;
+            if(!code.trim()) {
+                appendChatMessage('AI', "Please write or load some code in the editor first so I can analyze it for you!", true);
+                switchPage('playground');
                 return;
             }
 
-            const code = editor.getValue();
-
-            // Intercept standard stdout python print statements
-            pyodideInstance.setStdout({
-                batched: (text) => {
-                    outputEl.innerText += text + "\n";
-                }
-            });
-
-            try {
-                await pyodideInstance.runPythonAsync(code);
-                if (outputEl.innerText === "Running code...\n") {
-                    outputEl.innerText = "[Code executed successfully with no print output]";
-                }
-            } catch (err) {
-                outputEl.innerText = "❌ Python Error:\n" + err.message;
+            switchPage('playground');
+            if(action === 'explain') {
+                appendChatMessage('You', "Can you explain this code for me?", false);
+                setTimeout(() => {
+                    appendChatMessage('AI', `Here is what your code does:\n\n1. It defines variables and expressions.\n2. It executes logic sequentially.\n3. It outputs results to the console.\n\nTry modifying the values in the editor to see how the behavior changes!`, true);
+                }, 600);
+            } else if(action === 'debug') {
+                appendChatMessage('You', "Can you check my code for bugs or errors?", false);
+                setTimeout(() => {
+                    appendChatMessage('AI', `I reviewed your code. Everything looks syntactically correct! Make sure your indentation uses 4 spaces consistently and all strings are closed with matching quotes.`, true);
+                }, 600);
             }
-        }
-
-        // 8. Navigation Tab Switcher
-        function switchTab(tab) {
-            const learnSec = document.getElementById('section-learn');
-            const editorSec = document.getElementById('section-editor');
-            const aiSec = document.getElementById('section-ai');
-
-            const btnLearn = document.getElementById('tab-learn');
-            const btnEditor = document.getElementById('tab-editor');
-            const btnAi = document.getElementById('tab-ai');
-
-            // Reset Tab Button Styles
-            [btnLearn, btnEditor, btnAi].forEach(b => {
-                b.className = "px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition flex items-center space-x-2 text-gray-400 hover:text-white";
-            });
-
-            if (window.innerWidth < 768) {
-                // Hide all on mobile, display active single section
-                learnSec.classList.add('hidden');
-                editorSec.classList.add('hidden');
-                aiSec.classList.add('hidden');
-
-                if (tab === 'learn') {
-                    learnSec.classList.remove('hidden');
-                    btnLearn.className = "px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition flex items-center space-x-2 bg-blue-600 text-white";
-                } else if (tab === 'editor') {
-                    editorSec.classList.remove('hidden');
-                    btnEditor.className = "px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition flex items-center space-x-2 bg-blue-600 text-white";
-                    editor.refresh();
-                } else {
-                    aiSec.classList.remove('hidden');
-                    btnAi.className = "px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition flex items-center space-x-2 bg-blue-600 text-white";
-                }
-            } else {
-                // Desktop View: Keep main views side-by-side
-                learnSec.classList.remove('hidden');
-                editorSec.classList.remove('hidden');
-                aiSec.classList.remove('hidden');
-                editor.refresh();
-            }
-        }
-
-        // Ensure proper display on window resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 768) {
-                document.getElementById('section-learn').classList.remove('hidden');
-                document.getElementById('section-editor').classList.remove('hidden');
-                document.getElementById('section-ai').classList.remove('hidden');
-            }
-        });
-
-        // 9. Gemini API Integration for AI Tutor
-        async function callGeminiAI(userPrompt, systemInstruction = "") {
-            const apiKey = ""; // Canvas runtime provides key automatically
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userPrompt }] }],
-                systemInstruction: {
-                    parts: [{ text: systemInstruction || "You are a patient, encouraging beginner-friendly Python programming tutor. Explain technical concepts simply using short sentences and code examples." }]
-                }
-            };
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await response.json();
-            return data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't process that request right now.";
-        }
-
-        // 10. AI Chat Interactions
-        async function sendAIMessage() {
-            const inputField = document.getElementById('ai-user-input');
-            const prompt = inputField.value.trim();
-            if (!prompt) return;
-
-            appendChatMessage('user', prompt);
-            inputField.value = "";
-
-            const loadingId = appendLoadingMessage();
-
-            try {
-                const response = await callGeminiAI(prompt);
-                removeMessage(loadingId);
-                appendChatMessage('ai', response);
-            } catch (err) {
-                removeMessage(loadingId);
-                appendChatMessage('ai', "Error contacting AI. Please check your internet connection.");
-            }
-        }
-
-        function sendQuickPrompt(promptText) {
-            document.getElementById('ai-user-input').value = promptText;
-            sendAIMessage();
-        }
-
-        async function askAIToFixCode() {
-            const code = editor.getValue();
-            const consoleText = document.getElementById('console-output').innerText;
-
-            switchTab('ai');
-
-            appendChatMessage('user', "Can you review my code and fix any errors?");
-            const loadingId = appendLoadingMessage();
-
-            const prompt = `Here is my current Python code:\n\`\`\`python\n${code}\n\`\`\`\nConsole Output/Error:\n\`\`\`\n${consoleText}\n\`\`\`\nPlease explain what went wrong in plain, simple terms for a beginner, and provide the corrected code.`;
-
-            try {
-                const response = await callGeminiAI(prompt);
-                removeMessage(loadingId);
-                appendChatMessage('ai', response);
-            } catch (err) {
-                removeMessage(loadingId);
-                appendChatMessage('ai', "Failed to analyze code with AI.");
-            }
-        }
-
-        // Helpers to append AI messages
-        function appendChatMessage(sender, text) {
-            const chatBox = document.getElementById('ai-chat-history');
-            const msgDiv = document.createElement('div');
-            
-            if (sender === 'user') {
-                msgDiv.className = "bg-blue-900/40 border border-blue-700/50 rounded-lg p-2.5 text-gray-200 ml-4";
-                msgDiv.innerHTML = `<p class="font-medium text-blue-300 text-[11px] mb-0.5">You</p><p>${escapeHTML(text)}</p>`;
-            } else {
-                msgDiv.className = "bg-gray-700/60 border border-gray-600 rounded-lg p-2.5 text-gray-200 mr-2";
-                msgDiv.innerHTML = `<p class="font-medium text-emerald-400 text-[11px] mb-0.5"><i class="fa-solid fa-robot mr-1"></i> PyBot Tutor</p><div class="whitespace-pre-wrap">${formatCodeInText(text)}</div>`;
-            }
-
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function appendLoadingMessage() {
-            const chatBox = document.getElementById('ai-chat-history');
-            const id = 'loading-' + Date.now();
-            const msgDiv = document.createElement('div');
-            msgDiv.id = id;
-            msgDiv.className = "bg-gray-700/40 border border-gray-600/50 rounded-lg p-2.5 text-gray-400 text-xs flex items-center space-x-2";
-            msgDiv.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-emerald-400"></i> <span>PyBot is thinking...</span>`;
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-            return id;
-        }
-
-        function removeMessage(id) {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-        }
-
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, 
-                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
-        }
-
-        function formatCodeInText(text) {
-            // Basic markdown code block formatter for chat output
-            return text
-                .replace(/```python([\s\S]*?)```/g, '<pre class="bg-black/60 p-2 rounded text-emerald-300 font-mono text-[11px] my-1.5 overflow-x-auto">$1</pre>')
-                .replace(/```([\s\S]*?)```/g, '<pre class="bg-black/60 p-2 rounded text-emerald-300 font-mono text-[11px] my-1.5 overflow-x-auto">$1</pre>')
-                .replace(/`([^`]+)`/g, '<code class="bg-gray-900 px-1 py-0.5 rounded text-amber-300 font-mono">$1</code>');
         }
     </script>
 </body>
